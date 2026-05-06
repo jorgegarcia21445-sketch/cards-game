@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>The Eternal Grimorio</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap" rel="stylesheet">
+</head> 
+<body>
+
+    <!-- Coin Display -->
+    <div class="coin-box">
+        <img src="images/rupee.png" class="coin-icon">
+        <span id="coin-count">0</span>
+    </div>
+
+    <!-- Title -->
+    <h1>The Eternal Grimorio</h1>
+
+    <!-- Generate Coins -->
+    <button class="btn" id="addCoins">Generate Coins</button>
+
+    <!-- Menu -->
+    <div class="menu">
+        <button class="btn" id="pullBtn">
+            <img src="images/rupee.png" class="coin"> Pull for Cards
+        </button>
+        <button class="btn" id="viewBtn">View Grimorio</button>
+    </div>
+
+    <!-- ARROW -->
+    <div id="arrow">➤</div>
+
+    <!-- SOUNDS -->
+    <audio id="moveSound" src="sounds/move.mp3"></audio>
+    <audio id="selectSound" src="sounds/select.mp3"></audio>
+    <audio id="closeSound" src="sounds/close.mp3"></audio>
+
+    <!-- BLUR OVERLAY -->
+    <div id="blurOverlay" class="blur-overlay"></div>
+
+    <!-- PACK CONTAINER -->
+    <div id="packContainer" class="pack-container">
+        <button id="closePack">✕</button>
+    </div>
+
+    <!-- GRIMORIO OVERLAY -->
+    <div id="grimorioOverlay" class="grimorio-overlay">
+        <div class="grimorio-header">
+            <h2>The Eternal Grimorio</h2>
+            <button id="closeGrimorio">✕</button>
+        </div>
+
+        <div class="grimorio-filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="normal">Normal</button>
+            <button class="filter-btn" data-filter="especial">Especial</button>
+            <button class="filter-btn" data-filter="raro">Raro</button>
+            <button class="filter-btn" data-filter="legendaria">Legendaria</button>
+            <button class="filter-btn" data-filter="maestra">Maestra</button>
+            <button class="filter-btn" data-filter="dios">Dios</button>
+        </div>
+
+        <div class="grimorio-stats" id="grimorioStats"></div>
+
+        <div class="grimorio-grid" id="grimorioGrid"></div>
+    </div>
+
+    <script src="index.js"></script>
+
+    <script>
+        const arrow = document.getElementById("arrow");
+        const buttons = document.querySelectorAll(".btn");
+        const arrowSound = document.getElementById("moveSound");
+
+        let currentIndex = 0;
+
+        function updateArrow() {
+            const rect = buttons[currentIndex].getBoundingClientRect();
+            arrow.style.top = rect.top + rect.height / 2 + window.scrollY - 12 + "px";
+            arrow.style.left = rect.left - 50 + "px";
+            buttons.forEach(btn => btn.classList.remove("active"));
+            buttons[currentIndex].classList.add("active");
+        }
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowDown") {
+                currentIndex = (currentIndex + 1) % buttons.length;
+                if (arrowSound) { arrowSound.currentTime = 0; arrowSound.play(); }
+                updateArrow();
+            }
+            if (e.key === "ArrowUp") {
+                currentIndex = (currentIndex - 1 + buttons.length) % buttons.length;
+                if (arrowSound) { arrowSound.currentTime = 0; arrowSound.play(); }
+                updateArrow();
+            }
+            if (e.key === "Enter") {
+                buttons[currentIndex].click();
+            }
+        });
+
+        window.addEventListener("load", updateArrow);
+        window.addEventListener("resize", updateArrow);
+    </script>
+
+<!-- Card Inspect Modal -->
+<div class="inspect-overlay" id="inspectOverlay">
+    <button id="closeInspect">×</button>
+    <div style="display:flex; flex-direction:column; align-items:center">
+        <div class="inspect-card" id="inspectCard">
+            <img id="inspectImg" src="" alt="">
+            <div class="card-name" id="inspectName"></div>
+            <div class="card-rarity-label" id="inspectRarity"></div>
+            <div class="card-desc" id="inspectDesc"></div>
+        </div>
+        <div class="inspect-info">Click anywhere outside to close</div>
+    </div>
+</div>
+</body>   
+</html>

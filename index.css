@@ -1,0 +1,748 @@
+    /* Reset + full screen */
+    html, body {
+        height: 100%;
+        margin: 0;
+    }
+
+    body {
+        background-image: url("images/wp13489009-elden-ring-pc-wallpapers.jpg");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    h1 {
+        font-family: "Cinzel", serif;
+        font-size: 45px;
+        color: rgb(168, 85, 247);
+        margin-top: 40px;
+        text-shadow: 0 0 10px black;
+    }
+
+    .coin-box {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 10px 15px;
+        border-radius: 10px;
+        color: rgb(200, 0, 255);
+        font-family: "Cinzel", serif;
+        font-size: 20px;
+        box-shadow: 0 0 10px rgb(255, 0, 242);
+    }
+
+    .coin-icon { width: 25px; margin-right: 10px; }
+
+    #addCoins { margin-top: 20px; }
+
+    .menu {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 40px;
+    }
+
+    .btn {
+        font-family: "Cinzel", serif;
+        font-size: 22px;
+        color: rgba(255, 255, 255, 0.7);
+        background: none;
+        border: none;
+        padding: 15px 60px;
+        margin: 10px 0;
+        cursor: pointer;
+        position: relative;
+        transition: 0.3s;
+    }
+
+    .btn::after {
+        content: "";
+        position: absolute;
+        left: 0; bottom: 0;
+        width: 100%; height: 2px;
+        background: linear-gradient(to right, transparent, #a855f7, transparent);
+        opacity: 0;
+        transition: 0.3s;
+    }
+
+    .btn:hover {
+        color: #c084fc;
+        text-shadow: 0 0 10px #a855f7;
+        background: linear-gradient(to right, transparent, rgba(168,85,247,0.25), transparent);
+    }
+
+    .btn:hover::after { opacity: 1; }
+
+    .btn:active {
+        color: #e9d5ff;
+        text-shadow: 0 0 15px #9333ea;
+    }
+
+    .coin { width: 20px; margin-right: 10px; vertical-align: middle; }
+
+    #arrow {
+        position: absolute;
+        font-size: 20px;
+        color: #a855f7;
+        text-shadow: 0 0 8px #a855f7, 0 0 16px #c084fc;
+        pointer-events: none;
+        transition: top 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .btn.active {
+        color: #e9d5ff;
+        text-shadow: 0 0 10px #a855f7;
+        transform: scale(1.05);
+        background: linear-gradient(to right, rgba(168,85,247,0.35), rgba(168,85,247,0.15), transparent);
+    }
+
+    /* ── BLUR OVERLAY ── */
+    .blur-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        backdrop-filter: blur(6px);
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 999;
+    }
+    .blur-overlay.show { display: block; }
+
+    /* ── PACK CONTAINER ── */
+    .pack-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        gap: 24px;
+        background: rgba(0, 0, 0, 0.85);
+        padding: 40px 50px;
+        border-radius: 20px;
+        opacity: 0;
+        pointer-events: none;
+        transition: 0.3s;
+        z-index: 1000;
+    }
+
+    .pack-container.show {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    /* ── CARD ── */
+    .card {
+        width: 180px;
+        height: 260px;
+        perspective: 1000px;
+        cursor: pointer;
+    }
+
+    .card-inner {
+        width: 100%;
+        height: 100%;
+        transform-style: preserve-3d;
+        transition: transform 0.6s;
+        position: relative;
+    }
+
+    .card.flip .card-inner { transform: rotateY(180deg); }
+
+    .card-back {
+        position: absolute;
+        width: 100%; height: 100%;
+        backface-visibility: hidden;
+        background: radial-gradient(circle at 30% 30%, #2d1b69, #0d0d1a);
+        border: 2px solid #a855f7;
+        box-shadow: 0 0 15px #a855f7;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden; /* ADD THIS */
+    }
+
+    .card-back img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* ADD THIS */
+        border-radius: 8px;
+    }
+
+
+    .card-front {
+        position: absolute;
+        width: 100%; height: 100%;
+        transform: rotateY(180deg);
+        backface-visibility: hidden;
+        background: #111;
+        border-radius: 10px;
+        overflow: visible;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-front img {
+        width: 100%;
+        height: 72%;
+        object-fit: cover;
+        object-position: top;
+    }
+
+    .card-name {
+        font-family: "Cinzel", serif;
+        font-size: 10px;
+        text-align: center;
+        padding: 4px 4px 2px;
+        color: #fff;
+        background: rgba(0,0,0,0.6);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .card-rarity-label {
+        font-family: "Cinzel", serif;
+        font-size: 9px;
+        text-align: center;
+        padding: 2px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .card-desc {
+        font-size: 7px;
+        color: #ccc;
+        padding: 3px 5px;
+        line-height: 1.3;
+        flex: 1;
+        overflow: hidden;
+        background: rgba(0,0,0,0.5);
+    }
+
+    /* ── RARITY BORDERS ── */
+    .normal    { border: 2px solid #aaa;    box-shadow: 0 0 8px #aaa; }
+    .especial  { border: 2px solid #60a5fa; box-shadow: 0 0 12px #60a5fa; }
+    .raro      { border: 2px solid #a855f7; box-shadow: 0 0 15px #a855f7; }
+    .legendaria{ border: 2px solid gold;    box-shadow: 0 0 20px gold; }
+    .maestra   { border: 2px solid rgb(19, 1, 45);     box-shadow: 0 0 25px red; }
+    .dios      { border: 2px solid rgb(203, 3, 3);   box-shadow: 0 0 30px white; }
+
+    /* rarity label colors */
+    .normal    .card-rarity-label { color: #aaa; }
+    .especial  .card-rarity-label { color: #60a5fa; }
+    .raro      .card-rarity-label { color: #a855f7; }
+    .legendaria .card-rarity-label { color: gold; }
+    .maestra   .card-rarity-label { color: rgb(57, 3, 81); }
+    .dios      .card-rarity-label { color: rgb(236, 9, 9); }
+
+    /* ── HOLOGRAPHIC EFFECT (legendaria, maestra, dios) ── */
+    .card-front.legendaria::before,
+    .card-front.maestra::before,
+    .card-front.dios::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        border-radius: 10px;
+        pointer-events: none;
+
+        background: linear-gradient(
+            115deg,
+            transparent 20%,
+            rgba(255,255,255,0.08) 30%,
+            rgba(255,50,150,0.15) 40%,
+            rgba(50,200,255,0.15) 50%,
+            rgba(255,255,100,0.15) 60%,
+            rgba(100,255,150,0.1) 70%,
+            transparent 80%
+        );
+        background-size: 200% 200%;
+        animation: holoGradient 4s ease infinite;
+        mix-blend-mode: screen;
+    }
+
+    .card-front.legendaria::after,
+    .card-front.maestra::after,
+    .card-front.dios::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        border-radius: 10px;
+        pointer-events: none;
+
+        background-image:
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 1px, transparent 1px),
+            radial-gradient(circle at 20% 80%, rgba(255,255,255,0.2) 1px, transparent 1px),
+            radial-gradient(circle at 80% 20%, rgba(255,255,255,0.2) 1px, transparent 1px);
+        background-size: 30px 30px, 20px 20px, 25px 25px;
+        animation: holoSparkle 3s linear infinite;
+        mix-blend-mode: screen;
+        opacity: 0;
+    }
+
+    @keyframes holoGradient {
+        0%   { opacity: 0; background-position: 50% 50%; }
+        5%   { opacity: 0.3; }
+        9%   { background-position: 100% 100%; }
+        11%  { opacity: 0; }
+        50%  { opacity: 0; background-position: 100% 100%; }
+        55%  { opacity: 0.3; }
+        76%  { opacity: 0.5; }
+        100% { opacity: 0; background-position: 0% 0%; }
+    }
+
+    @keyframes holoSparkle {
+        0%   { opacity: 0; }
+        12%  { opacity: 1; }
+        70%  { opacity: 0.5; }
+        100% { opacity: 0.2; }
+    }
+
+    /* maestra gets red tint holo */
+    .card-front.maestra::before {
+        background: linear-gradient(
+            115deg,
+            transparent 20%,
+            rgba(255,50,50,0.1) 35%,
+            rgba(255,150,50,0.2) 45%,
+            rgba(255,50,50,0.15) 55%,
+            transparent 75%
+        );
+        background-size: 200% 200%;
+        animation: holoGradient 3s ease infinite;
+    }
+
+    /* dios gets full white/rainbow */
+    .card-front.dios::before {
+        background: linear-gradient(
+            115deg,
+            transparent 10%,
+            rgba(255,255,255,0.2) 25%,
+            rgba(200,100,255,0.3) 35%,
+            rgba(100,200,255,0.3) 45%,
+            rgba(255,255,100,0.3) 55%,
+            rgba(100,255,150,0.2) 65%,
+            transparent 80%
+        );
+        background-size: 200% 200%;
+        animation: holoGradient 2s ease infinite;
+    }
+
+    /* dios pulsing glow */
+    /* dios pulsing glow + rainbow border */
+    .card-front.dios {
+        animation: diosBorder 3s linear infinite, diosGlow 1.5s infinite alternate;
+    }
+
+    @keyframes diosBorder {
+        0%   { border-color: #ff0080; box-shadow: 0 0 30px #ff0080, 0 0 60px #a855f7; }
+        16%  { border-color: #ff8800; box-shadow: 0 0 30px #ff8800, 0 0 60px #c084fc; }
+        33%  { border-color: #ffff00; box-shadow: 0 0 30px #ffff00, 0 0 60px #a855f7; }
+        50%  { border-color: #00ff80; box-shadow: 0 0 30px #00ff80, 0 0 60px #c084fc; }
+        66%  { border-color: #0080ff; box-shadow: 0 0 30px #0080ff, 0 0 60px #a855f7; }
+        83%  { border-color: #8000ff; box-shadow: 0 0 30px #8000ff, 0 0 60px #c084fc; }
+        100% { border-color: #ff0080; box-shadow: 0 0 30px #ff0080, 0 0 60px #a855f7; }
+    }
+
+    @keyframes diosGlow {
+        from { filter: brightness(1); }
+        to   { filter: brightness(1.15); }
+    }
+
+    /* dios holo faster */
+    .card-front.dios::before { animation-duration: 2s; }
+    .card-front.dios::after  { animation-duration: 1.5s; }
+    .grimorio-card.dios::before { animation-duration: 2s; }
+
+    /* ── EXPLOSIONS ── */
+    .explode { animation: boom 0.5s ease; }
+
+    @keyframes boom {
+        0%  { transform: scale(1); }
+        50% { transform: scale(1.3); }
+        100%{ transform: scale(1); }
+    }
+
+    .dios.explode { animation: diosBoom 0.6s ease; }
+
+    @keyframes diosBoom {
+        0%  { transform: scale(1);   filter: brightness(1); }
+        50% { transform: scale(1.4); filter: brightness(2); }
+        100%{ transform: scale(1);   filter: brightness(1); }
+    }
+
+    /* ── CLOSE PACK BUTTON ── */
+    #closePack {
+        position: absolute;
+        top: 10px; right: 15px;
+        background: none;
+        border: none;
+        color: #a855f7;
+        font-size: 22px;
+        cursor: pointer;
+        text-shadow: 0 0 10px #a855f7;
+        z-index: 10;
+    }
+
+    /* ── GRIMORIO OVERLAY ── */
+    .grimorio-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(5, 0, 20, 0.96);
+        z-index: 2000;
+        flex-direction: column;
+        align-items: center;
+        overflow-y: auto;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    .grimorio-overlay.show { display: flex; }
+
+    .grimorio-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        position: relative;
+        margin-bottom: 16px;
+    }
+
+    .grimorio-header h2 {
+        font-family: "Cinzel", serif;
+        font-size: 32px;
+        color: #a855f7;
+        text-shadow: 0 0 15px #a855f7;
+        margin: 0;
+    }
+
+    #closeGrimorio {
+        position: absolute;
+        right: 0;
+        background: none;
+        border: none;
+        color: #a855f7;
+        font-size: 26px;
+        cursor: pointer;
+        text-shadow: 0 0 10px #a855f7;
+    }
+
+    /* ── GRIMORIO FILTERS ── */
+    .grimorio-filters {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 12px;
+    }
+
+    .filter-btn {
+        font-family: "Cinzel", serif;
+        font-size: 13px;
+        background: rgba(168,85,247,0.15);
+        border: 1px solid #a855f7;
+        color: #c084fc;
+        padding: 6px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+        background: rgba(168,85,247,0.4);
+        color: #fff;
+        box-shadow: 0 0 10px #a855f7;
+    }
+
+    /* ── GRIMORIO STATS ── */
+    .grimorio-stats {
+        font-family: "Cinzel", serif;
+        font-size: 13px;
+        color: #c084fc;
+        margin-bottom: 16px;
+        text-align: center;
+    }
+
+    /* ── GRIMORIO GRID ── */
+    .grimorio-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 16px;
+        width: 100%;
+        max-width: 1100px;
+        padding-bottom: 30px;
+    }
+
+    /* grimorio cards are smaller/static */
+    .grimorio-card {
+        width: 100%;
+        aspect-ratio: 0.69;
+        border-radius: 10px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        transition: transform 0.2s;
+        position: relative;
+    }
+
+    .grimorio-card:hover { transform: scale(1.05); }
+
+    .grimorio-card img {
+        width: 100%;
+        height: 70%;
+        object-fit: cover;
+        object-position: top;
+    }
+
+    .grimorio-card-name {
+        font-family: "Cinzel", serif;
+        font-size: 9px;
+        text-align: center;
+        padding: 3px;
+        color: #fff;
+        background: rgba(0,0,0,0.7);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .grimorio-card-rarity {
+        font-family: "Cinzel", serif;
+        font-size: 8px;
+        text-align: center;
+        padding: 2px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        background: rgba(0,0,0,0.6);
+        flex: 1;
+    }
+
+    .grimorio-card-count {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(0,0,0,0.8);
+        color: #c084fc;
+        font-family: "Cinzel", serif;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 10px;
+        border: 1px solid #a855f7;
+    }
+
+    /* grimorio holo on legendaria+ */
+    .grimorio-card.legendaria::before,
+    .grimorio-card.maestra::before,
+    .grimorio-card.dios::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+        border-radius: 10px;
+        background: linear-gradient(
+            115deg,
+            transparent 20%,
+            rgba(255,255,255,0.06) 30%,
+            rgba(255,50,150,0.12) 40%,
+            rgba(50,200,255,0.12) 50%,
+            rgba(255,255,100,0.1) 60%,
+            transparent 75%
+        );
+        background-size: 200% 200%;
+        animation: holoGradient 4s ease infinite;
+        mix-blend-mode: screen;
+    }
+
+    /* ── NOT COLLECTED (locked) ── */
+    .grimorio-card.locked img {
+        filter: brightness(0.15) grayscale(1);
+    }
+    .grimorio-card.locked .grimorio-card-name,
+    .grimorio-card.locked .grimorio-card-rarity {
+        color: #444;
+    }
+    .lock-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -60%);
+        font-size: 28px;
+        opacity: 0.4;
+        z-index: 3;
+    }
+
+    /* ── CARD INSPECT MODAL ── */
+    .inspect-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(8px);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+    }
+    .inspect-overlay.show { display: flex; }
+
+    .inspect-card {
+        width: 280px;
+        height: 400px;
+        border-radius: 14px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        animation: inspectPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .inspect-card img {
+        width: 100%;
+        height: 68%;
+        object-fit: cover;
+        object-position: top;
+    }
+
+    .inspect-card .card-name {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .inspect-card .card-rarity-label {
+        font-size: 12px;
+        padding: 5px;
+    }
+
+    .inspect-card .card-desc {
+        font-size: 10px;
+        padding: 6px 10px;
+        line-height: 1.5;
+    }
+
+    /* holo effects scale up on inspect card too */
+    .inspect-card.legendaria::before,
+    .inspect-card.maestra::before,
+    .inspect-card.dios::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        border-radius: 14px;
+        pointer-events: none;
+        background-size: 200% 200%;
+        animation: holoGradient 3s ease infinite;
+        mix-blend-mode: screen;
+    }
+    .inspect-card.legendaria::before {
+        background: linear-gradient(115deg,
+            transparent 20%, rgba(255,255,255,0.1) 30%,
+            rgba(255,50,150,0.22) 40%, rgba(50,200,255,0.22) 50%,
+            rgba(255,255,100,0.22) 60%, transparent 80%
+        );
+    }
+    .inspect-card.maestra::before {
+        background: linear-gradient(115deg,
+            transparent 20%, rgba(255,100,100,0.18) 30%,
+            rgba(255,50,50,0.3) 45%, rgba(255,150,50,0.25) 55%,
+            transparent 75%
+        );
+    }
+    .inspect-card.dios::before {
+        background: linear-gradient(115deg,
+            transparent 10%, rgba(255,255,255,0.3) 22%,
+            rgba(200,100,255,0.4) 33%, rgba(100,200,255,0.4) 44%,
+            rgba(255,255,100,0.4) 55%, rgba(100,255,180,0.3) 66%,
+            transparent 88%
+        );
+        animation-duration: 1.5s;
+    }
+    .inspect-card.legendaria::after,
+    .inspect-card.maestra::after,
+    .inspect-card.dios::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        border-radius: 14px;
+        pointer-events: none;
+        background-image:
+            radial-gradient(circle at 50% 50%, rgba(255,255,255,0.5) 1px, transparent 1px),
+            radial-gradient(circle at 20% 80%, rgba(255,255,255,0.4) 1px, transparent 1px),
+            radial-gradient(circle at 80% 20%, rgba(255,255,255,0.4) 1px, transparent 1px);
+        background-size: 28px 28px, 18px 18px, 22px 22px;
+        animation: holoSparkle 2.5s linear infinite;
+        mix-blend-mode: screen;
+    }
+
+    .inspect-info {
+        margin-top: 24px;
+        text-align: center;
+        color: #c084fc;
+        font-family: "Cinzel", serif;
+        font-size: 12px;
+        opacity: 0.7;
+    }
+
+    #closeInspect {
+        position: fixed;
+        top: 20px;
+        right: 24px;
+        background: none;
+        border: none;
+        color: #a855f7;
+        font-size: 32px;
+        cursor: pointer;
+        text-shadow: 0 0 10px #a855f7;
+        z-index: 10000;
+        line-height: 1;
+    }
+
+    @keyframes inspectPop {
+        from { transform: scale(0.6); opacity: 0; }
+        to   { transform: scale(1);   opacity: 1; }
+    }
+
+/* ── 3D INSPECT TILT ── paste this at the bottom of index.css ── */
+
+.inspect-overlay {
+    perspective: 900px;
+}
+
+.inspect-card {
+    transform-style: preserve-3d;
+    will-change: transform;
+    --shine-x: 50%;
+    --shine-y: 50%;
+}
+
+/* Mouse-tracking shine layer — targets the .tilt-shine div we inject */
+.inspect-card .tilt-shine {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    border-radius: 14px;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(
+        circle at var(--shine-x) var(--shine-y),
+        rgba(255, 255, 255, 0.3) 0%,
+        rgba(255, 255, 255, 0.08) 30%,
+        transparent 65%
+    );
+    transition: opacity 0.2s;
+}
+
+.inspect-card.tilting .tilt-shine {
+    opacity: 1;
+}
